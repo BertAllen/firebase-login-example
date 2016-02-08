@@ -7,6 +7,9 @@
 </head>
 
 <body ng-controller="AuthController as ac">
+    
+    <button ng-click="facebookLogin()">LOGIN WITH Facebook</button>
+    
     <form ng-submit="submitForm()" ng-show="!member">
         <div class="form-group">
             <label for="email">Email:</label>
@@ -25,8 +28,8 @@
         <h1>Welcome {{member.username}}</h1>
         
         
-        <ul>
-            <li ng-repeat="item in itemList">{{item}}</li>
+        <ul class="list-group">
+            <li class="list-group-item" ng-repeat="item in itemList">{{item.body}} <span class="badge" ng-click="removeItem(item)">X</span></li>
         </ul>
         
         <input type="text" ng-model="newItem"/>

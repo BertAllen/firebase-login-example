@@ -11,6 +11,30 @@ app.controller('AuthController', function($scope, FBREF, $firebaseArray){
     $scope.itemList = $firebaseArray(new Firebase(FBREF + 'items'));
     $scope.member;
         
+    $scope.removeItem = function(item){
+        $scope.itemList.$remove(item);
+    }    
+    
+    $scope.facebookLogin = function(){
+        db.authWithOAuthPopup('facebook', function(err, authData){
+            if(err){
+                console.log(err);
+                return;
+            }
+        var userToSave = {
+            username: authData.facebook.displayName,
+            reputation: 0,
+            created: Date.now()
+        }
+        $scope.$apply(function(){
+            $scope.member = userToSave;
+        })
+        //THis LINE SAVES THE USER INFO INTO THE FIREBASE DB
+        var cutOffFacebookIndex = authData.uid.indexOf(':')+1;
+        db.child('users').child(authData.uid.slice(cutOffFacebookIndex)).update(userToSave)
+        })
+    }    
+    
     function handleDBResponse (err, authData){
         if(err){
             console.log(err);
@@ -56,7 +80,7 @@ app.controller('AuthController', function($scope, FBREF, $firebaseArray){
             return
         }
         
-        $scope.itemList.push({body: $scope.newItem});
+        $scope.itemList.$add({body: $scope.newItem});
         $scope.newItem = ''
     }
     
